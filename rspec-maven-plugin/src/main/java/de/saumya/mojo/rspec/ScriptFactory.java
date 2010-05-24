@@ -12,6 +12,8 @@ public interface ScriptFactory {
 	void setReportPath(String reportPath);
 	void setClasspathElements(List<String> classpathElements);
 	void setSystemProperties(Properties systemProperties);
+	void setGemHome(File gemHome);
+	void setGemPath(File gemHome);
 	
 	String getScript() throws Exception;
 	void emit() throws Exception;

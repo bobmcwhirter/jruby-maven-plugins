@@ -35,6 +35,13 @@ public class RSpecScriptFactory extends AbstractScriptFactory {
 	private String getRSpecRunnerScript() {
 		StringBuilder builder = new StringBuilder();
 
+		if ( this.gemHome != null ) {
+			builder.append( "ENV['GEM_HOME']=%q(" + this.gemHome + ")\n" );
+		}
+		if ( this.gemPath != null ) {
+			builder.append( "ENV['GEM_PATH']=%q(" + this.gemPath + ")\n" );
+		}
+		
 		builder.append("require %q(rubygems)\n");
 		builder.append("require %q(spec)\n");
 		builder.append("require %q(de/saumya/mojo/rspec/maven_progress_formatter)\n");

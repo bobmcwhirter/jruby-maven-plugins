@@ -149,6 +149,8 @@ public class RSpecMojo extends AbstractGemMojo {
 		factory.setOutputDir(new File( outputDirectory) );
 		factory.setReportPath(reportPath);
 		factory.setSourceDir(specSourceDirectory().getAbsolutePath());
+		factory.setGemHome( this.gemHome );
+		factory.setGemPath( this.gemPath );
 		Properties props = systemProperties;
 		if (props == null) {
 			props = new Properties();
