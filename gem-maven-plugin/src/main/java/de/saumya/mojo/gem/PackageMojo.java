@@ -146,6 +146,7 @@ public class PackageMojo extends AbstractJRubyMojo {
 		final File libDir = new File(project.getBasedir(), "lib");
 		final File specDir = new File(project.getBasedir(), "spec");
 		final File testDir = new File(project.getBasedir(), "test");
+		final File binDir = new File(project.getBasedir(), "bin");
 
 		if (libDir.exists()) {
 			gemSpecWriter.appendPath("lib");
@@ -155,6 +156,9 @@ public class PackageMojo extends AbstractJRubyMojo {
 		}
 		if (testDir.exists()) {
 			gemSpecWriter.appendPath("test");
+		}
+		if (binDir.exists()) {
+			gemSpecWriter.appendPath("bin");
 		}
 
 		for (final Dependency dependency : (List<Dependency>) project.getDependencies()) {
