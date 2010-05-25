@@ -69,6 +69,7 @@ public class RSpecScriptFactory extends AbstractScriptFactory {
 		StringBuilder builder = new StringBuilder();
 
 		builder.append("require %(java)\n");
+		builder.append("require %(jruby)\n");
 
 		return builder.toString();
 	}
@@ -90,7 +91,7 @@ public class RSpecScriptFactory extends AbstractScriptFactory {
 		script.append("MOJO_CLASSPATH={\n");
 		script.append("  :directories=>[\n");
 		for (String item : directories) {
-			script.append("    %q(" + item + "),\n");
+			script.append("    %q(" + item + "/),\n");
 		}
 		script.append("  ],\n");
 		script.append("  :jars=>[\n");
@@ -104,6 +105,7 @@ public class RSpecScriptFactory extends AbstractScriptFactory {
 
 		script.append("MOJO_CLASSPATH[:directories].each do |dir|\n");
 		script.append("  $: << dir\n");
+		script.append("  JRuby.runtime.jruby_class_loader.addURL( Java::java.net::URL.new( %Q(file://#{dir}) ) )\n" );
 		script.append("end\n");
 
 		script.append("MOJO_CLASSPATH[:jars].each do |jar|\n");

@@ -113,6 +113,7 @@ public class RSpecMojo extends AbstractGemMojo {
 		}
 
 		execute(rspecScriptFactory.getScriptFile().getPath());
+		//execute(shellScriptFactory.getScriptFile().getPath());
 
 		File reportFile = new File(reportPath);
 
