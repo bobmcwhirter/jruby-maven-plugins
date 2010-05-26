@@ -35,13 +35,13 @@ public class RSpecScriptFactory extends AbstractScriptFactory {
 	private String getRSpecRunnerScript() {
 		StringBuilder builder = new StringBuilder();
 
-		if ( this.gemHome != null ) {
-			builder.append( "ENV['GEM_HOME']=%q(" + this.gemHome + ")\n" );
+		if (this.gemHome != null) {
+			builder.append("ENV['GEM_HOME']=%q(" + this.gemHome + ")\n");
 		}
-		if ( this.gemPath != null ) {
-			builder.append( "ENV['GEM_PATH']=%q(" + this.gemPath + ")\n" );
+		if (this.gemPath != null) {
+			builder.append("ENV['GEM_PATH']=%q(" + this.gemPath + ")\n");
 		}
-		
+
 		builder.append("require %q(rubygems)\n");
 		builder.append("require %q(spec)\n");
 		builder.append("require %q(de/saumya/mojo/rspec/maven_progress_formatter)\n");
@@ -69,50 +69,52 @@ public class RSpecScriptFactory extends AbstractScriptFactory {
 		StringBuilder builder = new StringBuilder();
 
 		builder.append("require %(java)\n");
-		builder.append("require %(jruby)\n");
 
 		return builder.toString();
 	}
 
 	private String getClasspathElementsScript() throws MalformedURLException {
-		List<String> jars = new ArrayList<String>();
-		List<String> directories = new ArrayList<String>();
-
-		for (String path : classpathElements) {
-			if (path.endsWith(".jar")) {
-				jars.add(path);
-			} else {
-				directories.add(path);
-			}
-		}
-
 		StringBuilder script = new StringBuilder();
 
-		script.append("MOJO_CLASSPATH={\n");
-		script.append("  :directories=>[\n");
-		for (String item : directories) {
-			script.append("    %q(" + item + "/),\n");
+		script.append( "require 'jruby'\n" );
+		
+		for (String path : classpathElements) {
+			if ( ! ( path.endsWith( "jar" ) || path.endsWith("/") ) ) {
+				path = path + "/";
+			}
+			script.append( "JRuby.runtime.jruby_class_loader.addURL( Java::java.net::URL.new( %Q(file://" + path + ") ) )\n" );
 		}
-		script.append("  ],\n");
-		script.append("  :jars=>[\n");
-		for (String item : jars) {
-			script.append("    %q(" + item + "),\n");
-		}
-		script.append("  ],\n");
-		script.append("}\n");
-
-		script.append("\n\n");
-
-		script.append("MOJO_CLASSPATH[:directories].each do |dir|\n");
-		script.append("  $: << dir\n");
-		script.append("  JRuby.runtime.jruby_class_loader.addURL( Java::java.net::URL.new( %Q(file://#{dir}) ) )\n" );
-		script.append("end\n");
-
-		script.append("MOJO_CLASSPATH[:jars].each do |jar|\n");
-		script.append("  require jar\n");
-		script.append("end\n");
-
+		
 		return script.toString();
+
+		/*
+		 * List<String> jars = new ArrayList<String>(); List<String> directories
+		 * = new ArrayList<String>();
+		 * 
+		 * for (String path : classpathElements) { if (path.endsWith(".jar")) {
+		 * jars.add(path); } else { directories.add(path); } }
+		 * 
+		 * StringBuilder script = new StringBuilder();
+		 * 
+		 * script.append("MOJO_CLASSPATH={\n");
+		 * script.append("  :directories=>[\n"); for (String item : directories)
+		 * { script.append("    %q(" + item + "/),\n"); }
+		 * script.append("  ],\n"); script.append("  :jars=>[\n"); for (String
+		 * item : jars) { script.append("    %q(" + item + "),\n"); }
+		 * script.append("  ],\n"); script.append("}\n");
+		 * 
+		 * script.append("\n\n");
+		 * 
+		 * script.append("MOJO_CLASSPATH[:directories].each do |dir|\n");
+		 * script.append("  $: << dir\n");script.append(
+		 * "  JRuby.runtime.jruby_class_loader.addURL( Java::java.net::URL.new( %Q(file://#{dir}) ) )\n"
+		 * ); script.append("end\n");
+		 * 
+		 * script.append("MOJO_CLASSPATH[:jars].each do |jar|\n");
+		 * script.append("  require jar\n"); script.append("end\n");
+		 * 
+		 * return script.toString();
+		 */
 
 	}
 
