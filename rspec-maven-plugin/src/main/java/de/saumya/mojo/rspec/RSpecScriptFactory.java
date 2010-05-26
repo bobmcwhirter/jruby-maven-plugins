@@ -2,8 +2,6 @@ package de.saumya.mojo.rspec;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 public class RSpecScriptFactory extends AbstractScriptFactory {
 
@@ -11,6 +9,7 @@ public class RSpecScriptFactory extends AbstractScriptFactory {
 		StringBuilder builder = new StringBuilder();
 
 		builder.append(getPrologScript());
+		builder.append(getSystemPropertiesScript());
 		builder.append(getClasspathElementsScript());
 		builder.append(getPluginClasspathScript());
 		builder.append(getConstantsConfigScript());
@@ -20,6 +19,16 @@ public class RSpecScriptFactory extends AbstractScriptFactory {
 		return builder.toString();
 	}
 
+	private String getSystemPropertiesScript() {
+		StringBuilder builder = new StringBuilder();
+		
+		for (Object propName : systemProperties.keySet()) {
+			String propValue = systemProperties.getProperty(propName.toString());
+			builder.append("Java::java.lang::System.setProperty( %q(" + propName.toString() + "), %q(" + propValue + ") )\n" );
+		}
+		
+		return builder.toString();
+	}
 	private String getConstantsConfigScript() {
 		StringBuilder builder = new StringBuilder();
 
@@ -86,36 +95,6 @@ public class RSpecScriptFactory extends AbstractScriptFactory {
 		}
 		
 		return script.toString();
-
-		/*
-		 * List<String> jars = new ArrayList<String>(); List<String> directories
-		 * = new ArrayList<String>();
-		 * 
-		 * for (String path : classpathElements) { if (path.endsWith(".jar")) {
-		 * jars.add(path); } else { directories.add(path); } }
-		 * 
-		 * StringBuilder script = new StringBuilder();
-		 * 
-		 * script.append("MOJO_CLASSPATH={\n");
-		 * script.append("  :directories=>[\n"); for (String item : directories)
-		 * { script.append("    %q(" + item + "/),\n"); }
-		 * script.append("  ],\n"); script.append("  :jars=>[\n"); for (String
-		 * item : jars) { script.append("    %q(" + item + "),\n"); }
-		 * script.append("  ],\n"); script.append("}\n");
-		 * 
-		 * script.append("\n\n");
-		 * 
-		 * script.append("MOJO_CLASSPATH[:directories].each do |dir|\n");
-		 * script.append("  $: << dir\n");script.append(
-		 * "  JRuby.runtime.jruby_class_loader.addURL( Java::java.net::URL.new( %Q(file://#{dir}) ) )\n"
-		 * ); script.append("end\n");
-		 * 
-		 * script.append("MOJO_CLASSPATH[:jars].each do |jar|\n");
-		 * script.append("  require jar\n"); script.append("end\n");
-		 * 
-		 * return script.toString();
-		 */
-
 	}
 
 	private String getPluginClasspathScript() {
