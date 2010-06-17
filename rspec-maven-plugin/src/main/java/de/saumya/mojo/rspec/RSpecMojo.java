@@ -81,13 +81,19 @@ public class RSpecMojo extends AbstractGemMojo {
 	private File specSourceDirectory() {
 		return new File(launchDirectory(), specSourceDirectory);
 	}
-
+	
 	@Override
-	public void executeWithGems() throws MojoExecutionException {
+    public void execute() throws MojoExecutionException {
 		if (skipTests) {
 			getLog().info("Skipping RSpec tests");
 			return;
 		}
+		
+		super.execute();
+	}
+
+	@Override
+	public void executeWithGems() throws MojoExecutionException {
 
 		final File specSourceDirectory = specSourceDirectory();
 		if (!specSourceDirectory.exists()) {

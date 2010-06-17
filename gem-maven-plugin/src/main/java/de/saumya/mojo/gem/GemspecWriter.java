@@ -156,6 +156,18 @@ class GemspecWriter {
                 .append(gemVersion(version))
                 .append("'\n");
     }
+    
+    void appendExecutables(List executables) 
+            throws IOException {
+    	this.writer.append( "  s.executables = [\n" );
+    	for ( Object executable : executables ) {
+    		this.writer.append( "    \"" );
+    		this.writer.append( executable.toString() );
+    		this.writer.append( "\",\n" );
+    	}
+    	this.writer.append( "  ]\n" );
+    	
+    }
 
     void appendPath(final String path) throws IOException {
         if (this.firstFile) {

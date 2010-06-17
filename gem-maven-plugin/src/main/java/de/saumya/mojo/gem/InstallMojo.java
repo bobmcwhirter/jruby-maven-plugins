@@ -27,7 +27,11 @@ public class InstallMojo extends AbstractJRubyMojo {
     public void execute() throws MojoExecutionException {
         if (this.artifact != null) {
             final GemArtifact gemArtifact = new GemArtifact(this.project);
-            execute("-S gem install -l " + gemArtifact.getFile());
+            String commandString = "-S gem install";
+            if ( this.args != null ) {
+                commandString += " " + this.args;
+            }
+            execute( commandString + " " + gemArtifact.getFile());
         }
         else {
             String commandString = "-S gem install";

@@ -3,6 +3,7 @@ package de.saumya.mojo.gem;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -97,7 +98,7 @@ public class PackageMojo extends AbstractJRubyMojo {
 	@SuppressWarnings( { "unchecked" })
 	private void build(final MavenProject project, final GemArtifact artifact) throws MojoExecutionException, IOException {
 
-		getLog().info("building gem for " + artifact + " . . ." );
+		getLog().info("building gem for " + artifact + " . . .");
 		getLog().info("include dependencies? " + this.includeDependencies);
 		final File gemDir = new File(this.buildDirectory, artifact.getGemName());
 		final File gemSpec = new File(gemDir, artifact.getGemName() + ".gemspec");
@@ -131,7 +132,6 @@ public class PackageMojo extends AbstractJRubyMojo {
 						});
 				for (Iterator each = jarDependencyArtifacts.getArtifacts().iterator(); each.hasNext();) {
 					Artifact dependency = (Artifact) each.next();
-					getLog().info(" -- include -- " + dependency);
 					gemSpecWriter.appendJarfile(dependency.getFile(), dependency.getFile().getName());
 				}
 			} catch (ArtifactResolutionException e) {
@@ -159,6 +159,16 @@ public class PackageMojo extends AbstractJRubyMojo {
 		}
 		if (binDir.exists()) {
 			gemSpecWriter.appendPath("bin");
+
+			List executables = new ArrayList();
+			
+			for ( File file : binDir.listFiles() ) {
+				if ( file.isFile() && file.canExecute() ) {
+					executables.add( file.getName() );
+				}
+			}
+			gemSpecWriter.appendExecutables(executables);
+
 		}
 
 		for (final Dependency dependency : (List<Dependency>) project.getDependencies()) {

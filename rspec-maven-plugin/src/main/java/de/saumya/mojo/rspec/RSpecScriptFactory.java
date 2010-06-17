@@ -50,13 +50,19 @@ public class RSpecScriptFactory extends AbstractScriptFactory {
 		if (this.gemPath != null) {
 			builder.append("ENV['GEM_PATH']=%q(" + this.gemPath + ")\n");
 		}
+		
+		builder.append( "things = [ SPEC_DIR ]\n");
+		builder.append( "if ( ! ARGV.empty? )\n" );
+		builder.append( "  things = ARGV\n" );
+		builder.append( "end\n" );
+		
 
 		builder.append("require %q(rubygems)\n");
 		builder.append("require %q(spec)\n");
 		builder.append("require %q(de/saumya/mojo/rspec/maven_progress_formatter)\n");
 		builder.append("options = ::Spec::Runner::OptionParser.parse([\n");
-		builder.append("  SPEC_DIR, '-f', \"html:#{REPORT_PATH}\", '-f', 'MavenProgressFormatter', *ARGV\n");
-		builder.append("], STDERR, STDOUT)\n");
+		builder.append("  things, '-f', \"html:#{REPORT_PATH}\", '-f', 'MavenProgressFormatter'\n");
+		builder.append("].flatten, STDERR, STDOUT)\n");
 		builder.append("::Spec::Runner::CommandLine.run(options)\n");
 
 		return builder.toString();
