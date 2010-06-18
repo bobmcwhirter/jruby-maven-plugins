@@ -73,6 +73,13 @@ public abstract class AbstractGemMojo extends AbstractJRubyMojo {
      * @parameter default-value="${plugin.artifacts}"
      */
     protected java.util.List<Artifact> pluginArtifacts;
+    
+    /**
+     * gem arguments for initialization
+     * 
+     * @parameter expression="${initializeArgs}"
+     */
+    protected String initializeArgs;
 
     public class UpdateCheckManager {
 
@@ -333,6 +340,11 @@ public abstract class AbstractGemMojo extends AbstractJRubyMojo {
                 }
             }
         }
+        
+        if ( this.initializeArgs != null ) {
+        	extraFlag += " " + this.initializeArgs;
+        }
+        
         if (gems.length() > 0) {
             execute("-S gem install --no-ri --no-rdoc " + extraFlag + " -l "
                     + gems, false);
